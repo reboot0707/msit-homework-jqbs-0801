@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's my slick!!!!!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css"
+        integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@2.0.1/slick/slick.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@2.0.1/slick/slick-theme.css" />
+    <style>
+        .container {
+            margin: 0 auto;
+            max-width: 80vw;
+        }
+
+        .my-img-setup {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container my-slick px-5 pt-5">
+        <div class="my-slick-content">
+            <img class="my-img-setup" src="imgs/mygo/0b0ccd8b-0f3f-405c-84aa-ec59e0a0601c.webp" alt="" srcset="">
+        </div>
+        <div class="my-slick-content">
+            <img class="my-img-setup" src="imgs/mygo/0dbde860-43fd-4979-bab7-e328501da837.webp" alt="" srcset="">
+        </div>
+        <div class="my-slick-content">
+            <img class="my-img-setup" src="imgs/mygo/3a030739-be5e-470c-aae5-4e1f751bb4cf.webp" alt="" srcset="">
+        </div>
+        <div class="my-slick-content">
+            <img class="my-img-setup" src="imgs/mygo/3ae25b25-0ea3-4a6a-b5fa-e012b5b3b92b.webp" alt="" srcset="">
+        </div>
+        <div class="my-slick-content">
+            <img class="my-img-setup" src="imgs/mygo/3eadfa27-2c09-4621-a1fb-6350b1a90b1a.webp" alt="" srcset="">
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"
+        integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"
+        integrity="sha512-8LENNbXmzI/Gbj+OwXmqR6V4QaUAw0/porPzy1+dQoJqC0JPHedWoe0DDOTL2uHA5XXJyIsPtiMHH86pVlay6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/gh/kenwheeler/slick@2.0.1/slick/slick.min.js"></script>
+    <script>
+        $(function () {
+            // $('.my-slick').slick();
+            // $('.my-slick').css({ 'height': '0.8vh' });
+            $('.my-slick').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                autoplay: true,
+                autoplaySpeed: 2000,
+                // slidesToShow: 1,
+                // centerMode: true,
+                // variableWidth: true,
+                // focusOnSelect: true,
+            });
+        })
+    </script>
+</body>
+
+</html>
