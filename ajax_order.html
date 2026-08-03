@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-12 col-md-6">
                 <form id="food-form" action="" class="rounded-3 border mb-3 p-3 row">
-                    <label class="food-label" for="">餐點</label>
+                    <label class="food-label" for="food-select">餐點</label>
                     <select id="food-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
                         <option selected disabled>請選擇</option>
@@ -33,7 +33,7 @@
                         <option value="2">餐點2</option>
                         -->
                     </select>
-                    <label class="food-label" for="">數量</label>
+                    <label class="food-label" for="food-amount">數量</label>
                     <input id="food-amount" type="number" value="1" min="1" step="1"
                         class="form-control form-control-sm">
                     <!--                     
@@ -45,8 +45,8 @@
                     <button type="submit" id="food-submit" class="btn btn-primary mt-3">送出</button>
                 </form>
 
-                <form action="" class="rounded-3 border p-3 row">
-                    <label class="drink-label" for="">飲料</label>
+                <form id="drink-form" action="" class="rounded-3 border p-3 row">
+                    <label class="drink-label" for="drink-select">飲料</label>
                     <select id="drink-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
                         <option selected disabled>請選擇</option>
@@ -55,7 +55,7 @@
                         <option value="2">餐點2</option>
                         -->
                     </select>
-                    <label class="drink-label" for="">數量</label>
+                    <label class="drink-label" for="drink-amount">數量</label>
                     <input id="drink-amount" type="number" value="1" min="1" step="1"
                         class="form-control form-control-sm">
                     <!--                     
@@ -70,14 +70,18 @@
 
             <div class="col-12 col-md-6">
                 <h3>我的訂單</h3>
-                <ul class="list-group">
+                <ul id="order-list-status" class="list-group">
+                    <!--                     
                     <li class="list-group-item">An item</li>
                     <li class="list-group-item">A second item</li>
                     <li class="list-group-item">A third item</li>
                     <li class="list-group-item">A fourth item</li>
+                     -->
+                </ul>
+                <ul class="order-result list-group">
                     <li class="list-group-item border-top-2 d-flex justify-content-between">
                         <span>總計：</span>
-                        <span class="price">NT$ 800</span>
+                        <span id="totalPrice" class="price">NT$ 800</span>
                     </li>
                 </ul>
             </div>
@@ -87,13 +91,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"></script>
     <script>
         $(function () {
+            let totalPrice = 0;
+
             $.ajax({
                 url: "data/food.json",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
                     $.each(data, function (index, value) {
-                        $("#food-select").append($("<option></option>").text(value.name));
+                        $("#food-select").append($("<option>").text(value.name).val(value.price));
                     });
                 }
             })
@@ -104,7 +110,7 @@
                 dataType: "json",
                 success: function (data) {
                     $.each(data, function (index, value) {
-                        $("#drink-select").append($("<option></option>").text(value.name));
+                        $("#drink-select").append($("<option>").text(value.name).val(value.price));
                     });
                 }
             })
@@ -112,9 +118,28 @@
             $('#food-form').on('submit', function (event) {
                 event.preventDefault();
 
-                let foodSelect = $("#food-select").val();
+                let foodSelect = $("#food-select").find("option:selected").text();
+                let foodSelectUnitPrice = $("#food-select").val();
                 let foodAmount = $("#food-amount").val();
-                console.log(foodSelect, foodAmount);
+
+                console.log(foodSelect, foodSelectUnitPrice, foodAmount, new Date());
+                $('#order-list-status').append($('<li>').addClass('list-group-item').text(`${foodSelect} （\$ ${foodSelectUnitPrice}） x ${foodAmount} 份 = \$ ${foodSelectUnitPrice * foodAmount}`));
+
+                totalPrice += foodSelectUnitPrice * foodAmount;
+                $('#totalPrice').text(`NT\$ ${totalPrice}`)
+            })
+
+            $('#drink-form').on('submit', function (event) {
+                event.preventDefault();
+
+                let drinkSelect = $("#drink-select option:selected").text();
+                let drinkSelectUnitPrice = $("#drink-select").find("option:selected").val();
+                let drinkAmount = $("#drink-amount").val();
+                console.log(drinkSelect, drinkSelectUnitPrice, drinkAmount, new Date());
+                $('#order-list-status').append($('<li>').addClass('list-group-item').text(`${drinkSelect} （\$ ${drinkSelectUnitPrice}） x ${drinkAmount} 份 = \$ ${drinkSelectUnitPrice * drinkAmount}`));
+
+                totalPrice += drinkSelectUnitPrice * drinkAmount;
+                $('#totalPrice').text(`NT\$ ${totalPrice}`)
             })
         })
     </script>
