@@ -23,7 +23,7 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-12 col-md-6">
-                <form action="" class="rounded-3 border p-3 row">
+                <form id="food-form" action="" class="rounded-3 border mb-3 p-3 row">
                     <label class="food-label" for="">餐點</label>
                     <select id="food-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
@@ -42,9 +42,11 @@
                         <option selected disabled>請選擇</option>
                     </select>
                     -->
+                    <button type="submit" id="food-submit" class="btn btn-primary mt-3">送出</button>
                 </form>
+
                 <form action="" class="rounded-3 border p-3 row">
-                    <label class="food-label" for="">飲料</label>
+                    <label class="drink-label" for="">飲料</label>
                     <select id="drink-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
                         <option selected disabled>請選擇</option>
@@ -53,7 +55,7 @@
                         <option value="2">餐點2</option>
                         -->
                     </select>
-                    <label class="food-label" for="">數量</label>
+                    <label class="drink-label" for="">數量</label>
                     <input id="drink-amount" type="number" value="1" min="1" step="1"
                         class="form-control form-control-sm">
                     <!--                     
@@ -62,10 +64,12 @@
                         <option selected disabled>請選擇</option>
                     </select>
                     -->
+                    <button type="submit" id="drink-submit" class="btn btn-primary mt-3">送出</button>
                 </form>
             </div>
 
             <div class="col-12 col-md-6">
+                <h3>我的訂單</h3>
                 <ul class="list-group">
                     <li class="list-group-item">An item</li>
                     <li class="list-group-item">A second item</li>
@@ -73,7 +77,7 @@
                     <li class="list-group-item">A fourth item</li>
                     <li class="list-group-item border-top-2 d-flex justify-content-between">
                         <span>總計：</span>
-                        <span class="price">$NT 800</span>
+                        <span class="price">NT$ 800</span>
                     </li>
                 </ul>
             </div>
@@ -103,6 +107,14 @@
                         $("#drink-select").append($("<option></option>").text(value.name));
                     });
                 }
+            })
+
+            $('#food-form').on('submit', function (event) {
+                event.preventDefault();
+
+                let foodSelect = $("#food-select").val();
+                let foodAmount = $("#food-amount").val();
+                console.log(foodSelect, foodAmount);
             })
         })
     </script>
