@@ -94,6 +94,7 @@
             let totalPrice = 0;
             let foodProductList = [];
             let drinkProductList = [];
+            let orderStatusArray = [];
 
             const convertStringToNumber = (rawValue) => {
                 const isEmpty =
@@ -127,7 +128,7 @@
                 dataType: "json",
                 success: function (data) {
                     $.each(data, function (index, value) {
-                        $("#food-select").append($("<option>").text(value.name).val(value.price));
+                        $("#food-select").append($("<option>").text(value.name).val(index));
                         foodProductList.push({ id: index, name: value.name, price: value.price })
                     });
                 }
@@ -139,8 +140,9 @@
                 dataType: "json",
                 success: function (data) {
                     $.each(data, function (index, value) {
-                        $("#drink-select").append($("<option>").text(value.name).val(value.price));
-                        drinkProductList.push({ id: index, name: value.name, price: value.price });
+                        let newindex = index + foodProductList.length;
+                        $("#drink-select").append($("<option>").text(value.name).val(newindex));
+                        drinkProductList.push({ id: newindex, name: value.name, price: value.price });
                     });
                 }
             })
@@ -152,7 +154,8 @@
                 event.preventDefault();
 
                 let foodSelect = $("#food-select").find("option:selected").text();
-                let foodSelectUnitPrice = convertStringToNumber($("#food-select").val());
+                let foodSelectIndex = convertStringToNumber($("#food-select").val());
+                let foodSelectUnitPrice = foodProductList.find(item => item.name === foodSelect).unitprice;
                 let foodAmount = convertStringToNumber($("#food-amount").val());
 
                 // 練習步驟 3：表單值通常是字串。先把單價與本次數量轉成數字，
@@ -164,14 +167,28 @@
 
                 // 練習步驟 4：根據步驟 1 設計的識別資訊，在 #order-list-status 中尋找相同餐點。
                 // 先把搜尋結果存成變數，再用它的 length 判斷這是「重複品項」還是「新項目」。
+                let order = orderStatusArray.find(item =>
+                    item.name === foodSelect
+                )
 
+                console.log(foodSelect, foodSelectUnitPrice, foodAmount, new Date());
                 // 練習步驟 5：若找到重複品項，讀出它原本的數量，加上這次輸入的數量，
                 // 接著同步更新保存的數量，以及畫面上的「x 幾份」和該品項小計。
+                if (order !== undefined) {
+                    let origin_amount = orderStatusArray[foodSelectIndex].amount;
+                    let new_amount = origin_amount + foodAmount;
+                    orderStatusArray[foodSelectIndex].amount = new_amount;
+                } else {
+                    // 練習步驟 6：只有找不到相同品項時，才執行下面的 append。
+                    // 建立新 <li> 時，別忘了同時保存日後查找所需的識別資訊、數量與單價。 
+                    orderStatusArray.push({ id: foodSelectIndex, name: foodSelect, amount: foodAmount, unitprice: foodSelectUnitPrice })
+                    // $('#order-list-status').append($('<li>').addClass('list-group-item').data("name", foodSelect).text(`${foodSelect} （\$ ${foodSelectUnitPrice}） x ${foodAmount} 份 = \$ ${foodSelectUnitPrice * foodAmount}`));
+                }
 
-                // 練習步驟 6：只有找不到相同品項時，才執行下面的 append。
-                // 建立新 <li> 時，別忘了同時保存日後查找所需的識別資訊、數量與單價。
-                console.log(foodSelect, foodSelectUnitPrice, foodAmount, new Date());
-                $('#order-list-status').append($('<li>').addClass('list-group-item').text(`${foodSelect} （\$ ${foodSelectUnitPrice}） x ${foodAmount} 份 = \$ ${foodSelectUnitPrice * foodAmount}`));
+                $('#order-list-status').empty();
+                $.each(orderStatusArray, function (index, anOrder) {
+                    $('#order-list-status').append($('<li>').addClass('list-group-item').data("name", anOrder.name).text(`${anOrder.name} （\$ ${anOrder.unitprice}） x ${anOrder.amount} 份 = \$ ${anOrder.unitprice * anOrder.amount}`));
+                })
 
                 // 練習步驟 7：不論是合併舊項目或新增項目，總計都只需加上「本次送出的金額」。
                 // 完成型別轉換後，檢查這裡是否仍可能發生字串串接，而不是數字相加。
