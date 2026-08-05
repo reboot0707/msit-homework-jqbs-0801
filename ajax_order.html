@@ -27,7 +27,7 @@
                     <label class="food-label" for="food-select">餐點</label>
                     <select id="food-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
-                        <option selected disabled>請選擇</option>
+                        <option value="請選擇" selected disabled>請選擇</option>
                         <!--                         
                         <option value="1">餐點1</option>
                         <option value="2">餐點2</option>
@@ -49,7 +49,7 @@
                     <label class="drink-label" for="drink-select">飲料</label>
                     <select id="drink-select" class="form-select form-select-sm mb-3"
                         aria-label=".form-select-sm example">
-                        <option selected disabled>請選擇</option>
+                        <option selected value="請選擇" disabled>請選擇</option>
                         <!--                         
                         <option value="1">餐點1</option>
                         <option value="2">餐點2</option>
@@ -92,7 +92,27 @@
     <script>
         $(function () {
             let totalPrice = 0;
+            let foodProductList = [];
+            let drinkProductList = [];
 
+            const convertStringToNumber = (rawValue) => {
+                const isEmpty =
+                    rawValue === null ||
+                    rawValue.trim() === "";
+
+                const numberValue = Number(rawValue);
+
+                const isValid =
+                    !isEmpty &&
+                    Number.isFinite(numberValue);
+
+                if (!isValid) {
+                    console.log("請輸入有效數字");
+                } else {
+                    //console.log("有效數字：", numberValue);
+                    return numberValue;
+                }
+            }
 
             // 練習步驟 1：先想好如何辨認「同一個品項」。
             // 只用價格可能會誤判（不同品項可能同價），只用名稱也要留意餐點與飲料是否可能同名。
@@ -108,6 +128,7 @@
                 success: function (data) {
                     $.each(data, function (index, value) {
                         $("#food-select").append($("<option>").text(value.name).val(value.price));
+                        foodProductList.push({ id: index, name: value.name, price: value.price })
                     });
                 }
             })
@@ -119,19 +140,27 @@
                 success: function (data) {
                     $.each(data, function (index, value) {
                         $("#drink-select").append($("<option>").text(value.name).val(value.price));
+                        drinkProductList.push({ id: index, name: value.name, price: value.price });
                     });
                 }
             })
+
+            console.log(foodProductList);
+            console.log(drinkProductList);
 
             $('#food-form').on('submit', function (event) {
                 event.preventDefault();
 
                 let foodSelect = $("#food-select").find("option:selected").text();
-                let foodSelectUnitPrice = $("#food-select").val();
-                let foodAmount = $("#food-amount").val();
+                let foodSelectUnitPrice = convertStringToNumber($("#food-select").val());
+                let foodAmount = convertStringToNumber($("#food-amount").val());
 
                 // 練習步驟 3：表單值通常是字串。先把單價與本次數量轉成數字，
                 // 並確認使用者真的選了餐點，避免把「請選擇」加入訂單。
+                if (foodSelectUnitPrice === undefined || foodAmount === undefined) {
+                    console.log("格式錯誤");
+                    return;
+                };
 
                 // 練習步驟 4：根據步驟 1 設計的識別資訊，在 #order-list-status 中尋找相同餐點。
                 // 先把搜尋結果存成變數，再用它的 length 判斷這是「重複品項」還是「新項目」。
@@ -154,8 +183,13 @@
                 event.preventDefault();
 
                 let drinkSelect = $("#drink-select option:selected").text();
-                let drinkSelectUnitPrice = $("#drink-select").find("option:selected").val();
-                let drinkAmount = $("#drink-amount").val();
+                let drinkSelectUnitPrice = convertStringToNumber($("#drink-select").find("option:selected").val());
+                let drinkAmount = convertStringToNumber($("#drink-amount").val());
+
+                if (drinkSelectUnitPrice === undefined || drinkAmount === undefined) {
+                    console.log("格式錯誤");
+                    return;
+                };
 
                 // 練習步驟 8：把餐點 handler 中完成的「驗證 → 查找 → 合併或新增 → 更新總計」流程
                 // 套用到飲料。識別資訊要包含「飲料」類別，避免和同名餐點互相合併。
