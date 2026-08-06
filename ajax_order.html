@@ -155,19 +155,23 @@
 
                 let foodSelect = $("#food-select").find("option:selected").text();
                 let foodSelectIndex = convertStringToNumber($("#food-select").val());
-                let foodSelectUnitPrice = foodProductList.find(item => item.name === foodSelect).unitprice;
                 let foodAmount = convertStringToNumber($("#food-amount").val());
-
                 // 練習步驟 3：表單值通常是字串。先把單價與本次數量轉成數字，
                 // 並確認使用者真的選了餐點，避免把「請選擇」加入訂單。
-                if (foodSelectUnitPrice === undefined || foodAmount === undefined) {
+                if (foodSelectIndex === undefined || foodAmount === undefined) {
                     console.log("格式錯誤");
                     return;
                 };
+                let foodSelectUnitPrice = foodProductList.find(item => item.name === foodSelect).price;
 
                 // 練習步驟 4：根據步驟 1 設計的識別資訊，在 #order-list-status 中尋找相同餐點。
                 // 先把搜尋結果存成變數，再用它的 length 判斷這是「重複品項」還是「新項目」。
                 let order = orderStatusArray.find(item =>
+                    item.name === foodSelect
+                )
+
+                
+                let orderIndex = orderStatusArray.findIndex(item =>
                     item.name === foodSelect
                 )
 
@@ -177,7 +181,7 @@
                 if (order !== undefined) {
                     let origin_amount = orderStatusArray[foodSelectIndex].amount;
                     let new_amount = origin_amount + foodAmount;
-                    orderStatusArray[foodSelectIndex].amount = new_amount;
+                    orderStatusArray[orderIndex].amount = new_amount;
                 } else {
                     // 練習步驟 6：只有找不到相同品項時，才執行下面的 append。
                     // 建立新 <li> 時，別忘了同時保存日後查找所需的識別資訊、數量與單價。 
@@ -200,21 +204,51 @@
                 event.preventDefault();
 
                 let drinkSelect = $("#drink-select option:selected").text();
-                let drinkSelectUnitPrice = convertStringToNumber($("#drink-select").find("option:selected").val());
+                let drinkSelectIndex = convertStringToNumber($("#drink-select").find("option:selected").val());
                 let drinkAmount = convertStringToNumber($("#drink-amount").val());
-
-                if (drinkSelectUnitPrice === undefined || drinkAmount === undefined) {
+                console.log(drinkSelectIndex);
+                if (drinkSelectIndex === undefined || drinkAmount === undefined) {
                     console.log("格式錯誤");
                     return;
                 };
+                let drinkSelectUnitPrice = drinkProductList.find(item => item.name === drinkSelect).price;
+
+                //drinkSelectUnitPrice
+                let order = orderStatusArray.find(item =>
+                    item.name === drinkSelect
+                )
+
+                let orderIndex = orderStatusArray.findIndex(item =>
+                    item.name === drinkSelect
+                )
 
                 // 練習步驟 8：把餐點 handler 中完成的「驗證 → 查找 → 合併或新增 → 更新總計」流程
                 // 套用到飲料。識別資訊要包含「飲料」類別，避免和同名餐點互相合併。
+                console.log(drinkSelect, drinkSelectUnitPrice, drinkAmount, new Date());
+                // 練習步驟 5：若找到重複品項，讀出它原本的數量，加上這次輸入的數量，
+                // 接著同步更新保存的數量，以及畫面上的「x 幾份」和該品項小計。
+                if (order !== undefined) {
+                    console.log(order);
+                    let origin_amount = order.amount;
+                    let new_amount = origin_amount + drinkAmount;
+                    orderStatusArray[orderIndex].amount = new_amount;
+                } else {
+                    // 練習步驟 6：只有找不到相同品項時，才執行下面的 append。
+                    // 建立新 <li> 時，別忘了同時保存日後查找所需的識別資訊、數量與單價。 
+                    orderStatusArray.push({ id: drinkSelectIndex, name: drinkSelect, amount: drinkAmount, unitprice: drinkSelectUnitPrice })
+                    // $('#order-list-status').append($('<li>').addClass('list-group-item').data("name", drinkSelect).text(`${drinkSelect} （\$ ${drinkSelectUnitPrice}） x ${drinkAmount} 份 = \$ ${drinkSelectUnitPrice * drinkAmount}`));
+                }
+
+                $('#order-list-status').empty();
+                $.each(orderStatusArray, function (index, anOrder) {
+                    $('#order-list-status').append($('<li>').addClass('list-group-item').data("name", anOrder.name).text(`${anOrder.name} （\$ ${anOrder.unitprice}） x ${anOrder.amount} 份 = \$ ${anOrder.unitprice * anOrder.amount}`));
+                })
+
 
                 // 進階整理（基本功能完成後再做）：觀察兩個 submit handler 哪些步驟幾乎相同，
                 // 嘗試抽成一個共用函式，並以參數傳入類別、品名、單價與本次數量。
-                console.log(drinkSelect, drinkSelectUnitPrice, drinkAmount, new Date());
-                $('#order-list-status').append($('<li>').addClass('list-group-item').text(`${drinkSelect} （\$ ${drinkSelectUnitPrice}） x ${drinkAmount} 份 = \$ ${drinkSelectUnitPrice * drinkAmount}`));
+                // console.log(drinkSelect, drinkSelectUnitPrice, drinkAmount, new Date());
+                // $('#order-list-status').append($('<li>').addClass('list-group-item').text(`${drinkSelect} （\$ ${drinkSelectUnitPrice}） x ${drinkAmount} 份 = \$ ${drinkSelectUnitPrice * drinkAmount}`));
 
                 totalPrice += drinkSelectUnitPrice * drinkAmount;
                 $('#totalPrice').text(`NT\$ ${totalPrice}`)
