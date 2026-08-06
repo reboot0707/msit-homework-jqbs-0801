@@ -179,7 +179,7 @@
                 // 練習步驟 5：若找到重複品項，讀出它原本的數量，加上這次輸入的數量，
                 // 接著同步更新保存的數量，以及畫面上的「x 幾份」和該品項小計。
                 if (order !== undefined) {
-                    let origin_amount = orderStatusArray[foodSelectIndex].amount;
+                    let origin_amount = orderStatusArray[orderIndex].amount;
                     let new_amount = origin_amount + foodAmount;
                     orderStatusArray[orderIndex].amount = new_amount;
                 } else {
